@@ -1,0 +1,20 @@
+{
+  "private": true,
+  "scripts": {
+    "test": "vitest",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r exec tsc --noEmit",
+    "pack": "pnpm build && rm -rf dist && mkdir -p dist && pnpm -r --filter '!demo' exec pnpm pack --pack-destination $PWD/dist",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "pnpm build && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.29.8",
+    "@types/node": "^22.10.1",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^6.0.5",
+    "vitest": "^4.0.18"
+  }
+}

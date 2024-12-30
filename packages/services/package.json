@@ -1,0 +1,66 @@
+{
+  "name": "@effect-ak/aws-services",
+  "version": "0.0.1",
+  "license": "MIT",
+  "type": "module",
+  "author": {
+    "name": "Aleksandr Kondaurov",
+    "email": "kondaurov.dev@gmail.com"
+  },
+  "description": "Effect-based AWS services, infrastructure and Lambda handlers",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/effect-ak/aws-sdk.git",
+    "directory": "packages/services"
+  },
+  "homepage": "https://github.com/effect-ak/aws-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/effect-ak/aws-sdk/issues"
+  },
+  "keywords": [
+    "aws",
+    "aws-sdk",
+    "effect",
+    "effect-ts",
+    "lambda",
+    "infrastructure",
+    "sqs",
+    "ssm",
+    "typescript",
+    "functional-programming"
+  ],
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "gen": "node node_modules/@effect-ak/aws-sdk/dist/generate.js",
+    "prebuild": "pnpm run gen",
+    "build": "tsup",
+    "test": "gen-aws-sdk & vitest run"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "dependencies": {
+    "@aws-sdk/client-ssm": "^3.975.0",
+    "@aws-sdk/client-sqs": "^3.975.0",
+    "effect": "^3.19.14",
+    "smol-toml": "^1.6.0"
+  },
+  "devDependencies": {
+    "@effect-ak/aws-sdk": "workspace:*",
+    "@effect/opentelemetry": "^0.61.0",
+    "@opentelemetry/sdk-trace-base": "^2.5.0",
+    "@opentelemetry/sdk-trace-node": "^2.5.0",
+    "@types/aws-lambda": "^8.10.144",
+    "type-fest": "^4.22.1"
+  }
+}

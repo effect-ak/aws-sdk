@@ -1,0 +1,4 @@
+{
+  "$schema": "../gen/schema.json",
+  "generate_to": "src/clients"
+}
