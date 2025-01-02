@@ -1,3 +1,6 @@
+[![NPM Version](https://img.shields.io/npm/v/%40effect-ak%2Faws-sdk)](https://www.npmjs.com/package/@effect-ak/aws-sdk)
+![NPM Downloads](https://img.shields.io/npm/dw/%40effect-ak%2Faws-sdk)
+
 ## Motivation
 
 I wanted to work with the AWS SDK using effects instead of promises. The main drawback of AWS SDK libraries that rely on promises is error handling. For example, when using the SDK to create a function that already exists, we might want to update the function's code instead of failing with an exception. Implementing such straightforward scenarios is very cumbersome with promises, whereas `effect-ts` allows you to seamlessly write complex workflows without increasing the complexity of understanding the code.
