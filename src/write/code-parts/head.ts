@@ -6,9 +6,11 @@ export const writeHeadPart = (
   out: TypescriptSourceFile
 ) => {
 
-  out.addStatements(_ => _.writeLine("// *****  GENERATED CODE *****"));
-
   out.addImportDeclarations([
+    {
+      namedImports: ["Context", "Micro"],
+      moduleSpecifier: `effect`,
+    },
     {
       namespaceImport: "Sdk",
       isTypeOnly: true,

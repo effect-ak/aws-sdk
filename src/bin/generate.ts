@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { Effect } from "effect";
 import { MainService } from "#/main/_service.js";
 

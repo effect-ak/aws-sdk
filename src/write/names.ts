@@ -10,8 +10,6 @@ export function getTypeNames(
     clientName,
     clientApiInterface: `${clientName}Api`,
     commandsFactory: `${clientName}CommandFactory`,
-    allExceptions: `${clientName}_EXCEPTIONS`,
-    exceptionName: `${clientName}ExceptionName`,
     exceptionClassName: `${clientName}Exception`
   } as const;
 

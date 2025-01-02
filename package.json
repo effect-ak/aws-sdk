@@ -1,6 +1,6 @@
 {
   "name": "@effect-ak/codegen-aws-sdk-clients",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "author": {
     "name": "Aleksandr Kondaurov",
@@ -18,11 +18,10 @@
     "directory": "codegen/aws-sdk-clients"
   },
   "license": "MIT",
-  "main": "./dist/cjs/index.js",
+  "main": "./dist/generate.cjs",
   "module": "./dist/esm/index.js",
-  "types": "./dist/index.d.ts",
   "bin": {
-    "codegen-aws-sdk-clients": "./dist/cjs/run.js"
+    "codegen-aws-sdk-clients": "./dist/generate.cjs"
   },
   "scripts": {
     "gen-schema": "tsx scripts/prep.ts"
@@ -35,6 +34,8 @@
     "@aws-sdk/client-s3": "3.709.0",
     "@aws-sdk/client-apigatewayv2": "3.709.0",
     "@aws-sdk/client-dynamodb-streams": "3.709.0",
+    "@aws-sdk/client-lambda": "3.709.0",
+    "@aws-sdk/client-iam": "3.709.0",
     "@types/node": "^22.10.1",
     "typescript": "^5.7.2",
     "vite-tsconfig-paths": "^5.1.4",

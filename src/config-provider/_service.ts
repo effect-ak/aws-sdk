@@ -11,12 +11,16 @@ export class ConfigProviderService
 
         if (clientsInPackageJson.length == 0) {
           yield* Effect.logWarning("No clients to generate");
-        }
+        };
 
-        return {
+        const config = {
           generate_to: definedConfig.generate_to ?? "src/generated",
-          clients: clientsInPackageJson
+          clients: definedConfig.clients ?? clientsInPackageJson
         } as const;
+
+        yield* Effect.logInfo("config", config)
+
+        return config;
 
       })
 

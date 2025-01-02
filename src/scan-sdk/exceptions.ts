@@ -28,15 +28,22 @@ const getFiltered = (
       if (!extendsFrom.endsWith("Exception")) return Option.none();
       const className = cls.getName();
       if (!className) return Option.none();
+      let baseName = className.replace("Exception", "");
+      baseName = baseName.replace("Error", "");
       const props =
         Array.filterMap(cls.getProperties(), p => {
-          if (p.getScope() != "public") {
-            return Option.none();
-          }
-          return Option.some([p.getName(), p.getType().getApparentType().getText()])
+          if (p.getScope() != "public") return Option.none();
+          const type = p.getType();
+          return Option.some({ 
+            name: p.getName(),
+            type: type.isLiteral() ? 
+              type.getLiteralValue()?.toString() : 
+              type.getApparentType().getText(),
+          })
         });
 
-      return Option.some({ extendsFrom, className, props });
+      if (props.length == 0) return Option.none();
+      return Option.some({ baseName, className, extendsFrom, props });
     }),
     Array.dedupeWith((a, b) => a.className == b.className)
   );

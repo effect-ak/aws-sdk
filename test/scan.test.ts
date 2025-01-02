@@ -5,11 +5,14 @@ describe("scan", () => {
 
   it("node modules", () => {
 
-    const a = ScannedSdk.fromNodeModules("s3");
+    const sdk = ScannedSdk.fromNodeModules("lambda");
 
-    assert(a._tag == "Right")
+    assert(sdk._tag == "Right");
 
-    expect(a)
+    const errors = sdk.right.getExceptions();
+    const name = sdk.right.getCommands().find(_ => _.originName == "UpdateFunctionCode");
+
+    const a = 1;
 
   });
 
