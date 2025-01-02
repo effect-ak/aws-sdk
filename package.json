@@ -1,6 +1,6 @@
 {
   "name": "@effect-ak/aws-sdk",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": {
     "name": "Aleksandr Kondaurov",
     "email": "kondaurov.dev@gmail.com"
@@ -26,7 +26,8 @@
     "gen-schema": "tsx scripts/prep.ts"
   },
   "dependencies": {
-    "ts-morph": "^24.0.0"
+    "ts-morph": "^24.0.0",
+    "effect": "^3.10.0"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "3.709.0",
@@ -38,8 +39,5 @@
     "typescript": "^5.7.2",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^2.1.8"
-  },
-  "peerDependencies": {
-    "effect": "^3.10.0"
   }
 }
