@@ -1,5 +1,5 @@
 {
-  "name": "@effect-ak/codegen-aws-sdk-clients",
+  "name": "@effect-ak/aws-sdk",
   "version": "0.0.2",
   "type": "module",
   "author": {
@@ -14,7 +14,7 @@
     "dist"
   ],
   "repository": {
-    "url": "https://github.com/@effect-ak/aws-sdk-clients",
+    "url": "https://github.com/@effect-ak/aws-sdk",
     "directory": "codegen/aws-sdk-clients"
   },
   "license": "MIT",
