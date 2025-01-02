@@ -1,7 +1,6 @@
 {
   "name": "@effect-ak/aws-sdk",
   "version": "0.0.2",
-  "type": "module",
   "author": {
     "name": "Aleksandr Kondaurov",
     "email": "kondaurov.dev@gmail.com"
@@ -21,13 +20,12 @@
   "main": "./dist/generate.cjs",
   "module": "./dist/esm/index.js",
   "bin": {
-    "codegen-aws-sdk-clients": "./dist/generate.cjs"
+    "gen-aws-sdk": "./dist/generate.cjs"
   },
   "scripts": {
     "gen-schema": "tsx scripts/prep.ts"
   },
   "dependencies": {
-    "effect": "^3.10.0",
     "ts-morph": "^24.0.0"
   },
   "devDependencies": {
@@ -40,5 +38,8 @@
     "typescript": "^5.7.2",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^2.1.8"
+  },
+  "peerDependencies": {
+    "effect": "^3.10.0"
   }
 }
