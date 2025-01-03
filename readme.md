@@ -50,7 +50,7 @@ const live =
   );
 
 // Use s3
-const getBucketOrUpdateTag =
+const createBucketOrUpdateTag =
   Effect.gen(function* () {
 
     const bucketName = "hello-effect";
@@ -77,7 +77,7 @@ const getBucketOrUpdateTag =
   });
 
 // Run effect
-getBucketOrUpdateTag.pipe(
+createBucketOrUpdateTag.pipe(
   Effect.provide(live),
   Effect.runPromise
 ).finally(() => {
