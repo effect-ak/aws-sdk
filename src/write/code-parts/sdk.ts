@@ -39,7 +39,6 @@ export const writeSdkPart = (
             pipe(
               Array.filterMap(cmd.throws, name => {
                 if (!exceptionNames.has(name)) {
-                  console.warn("Unknown exception", name);
                   return Option.none()
                 };
                 return Option.some(replaceName(name).replace("ErrorError", "Error"))

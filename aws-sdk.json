@@ -1,4 +1,3 @@
 {
-  "generate_to": "example/generated",
-  "clients": [ "lambda" ]
+  "generate_to": "example/generated"
 }
