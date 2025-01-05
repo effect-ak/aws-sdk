@@ -1,6 +1,6 @@
 {
   "name": "@effect-ak/aws-sdk",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": {
     "name": "Aleksandr Kondaurov",
     "email": "kondaurov.dev@gmail.com"
@@ -17,10 +17,10 @@
     "directory": "codegen/aws-sdk-clients"
   },
   "license": "MIT",
-  "main": "./dist/generate.cjs",
-  "module": "./dist/esm/index.js",
+  "main": "./dist/generate.js",
+  "module": "./dist/generate.mjs",
   "bin": {
-    "gen-aws-sdk": "./dist/generate.cjs"
+    "gen-aws-sdk": "./dist/generate.js"
   },
   "scripts": {
     "gen-schema": "tsx scripts/prep.ts"
