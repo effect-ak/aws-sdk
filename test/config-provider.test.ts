@@ -18,7 +18,7 @@ describe("configuration provider", () => {
         Effect.provide(ConfigProviderService.Default),
         Effect.tapErrorCause(Effect.logError),
         Effect.runPromiseExit
-      )
+      );
 
     assert(result._tag == "Success");
 
