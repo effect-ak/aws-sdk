@@ -2,7 +2,7 @@ import type { ScannedSdk } from "#/scan-sdk/_model.js";
 import type { TypeNames, TypescriptSourceFile } from "#/type.js";
 
 export const writeEffectPart = (
-  { configInterface, exceptionClass, sdkName }: ScannedSdk,
+  { configInterface, sdkName }: ScannedSdk,
   { clientName, clientApiInterface, commandsFactory }: TypeNames,
   out: TypescriptSourceFile,
 ) => {
@@ -19,8 +19,10 @@ export const writeEffectPart = (
     statements: `
       return Micro.try({
         try: () => new _SdkClient(config),
-        catch: error => new ${clientName}UnknownError(error)
-      })
+        catch: _ => _
+      }).pipe(
+        Micro.orDie
+      )
     `
   }).formatText({
     indentSize: 2
@@ -64,24 +66,27 @@ export const writeEffectPart = (
             return client.send(command) as Promise<${clientApiInterface}[M][1]>
           },
           catch: error => {
-            if (error instanceof ${exceptionClass.getName()}) {
-              const key = error.name;
-              if (isErrorKey(key)) {
-                const errorConstructor = allErrors[key];
-                return new errorConstructor(error as any) as ${clientApiInterface}[M][2];
-              } else {
-                return new ${clientName}UnknownError(error)
-              }
+            if (error instanceof _ServiceBaseError) {
+              return new ${clientName}Error(error, actionName);
             } else {
-              return new ${clientName}UnknownError(error)
+              return { _tag: "#Defect", error } as const;
             }
           }
         }).pipe(
-          Micro.tap(success => {
-            console.debug("${clientName}", { success });
+          Micro.catchTag("#Defect", _ => Micro.die(_)),
+          Micro.tap((result) => {
+            console.debug("${clientName}, success", {
+              actionName,
+              statusCode: result.$metadata.httpStatusCode
+            });
           }),
           Micro.tapError(error => {
-            console.debug("${clientName}", { error });
+            console.debug("${clientName}, error", {
+              actionName,
+              name: error.cause.name,
+              message: error.cause.message,
+              statusCode: error.cause.$metadata.httpStatusCode
+            });
             return Micro.void;
           })
         );

@@ -21,7 +21,8 @@ const getFiltered = (
   input: Pick<ScannedSdkShape, "classes">
 ) =>
   pipe(
-    Array.filterMap(input.classes, cls => {
+    input.classes,
+    Array.filterMap(cls => {
       const ext = cls.getExtends();
       if (!ext) return Option.none();
       const extendsFrom = ext.getExpression().getText();
@@ -42,7 +43,7 @@ const getFiltered = (
           })
         });
 
-      if (props.length == 0) return Option.none();
+      // if (props.length == 0) return Option.none();
       return Option.some({ baseName, className, extendsFrom, props });
     }),
     Array.dedupeWith((a, b) => a.className == b.className)

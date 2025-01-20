@@ -4,7 +4,7 @@ import { makePrettyOperationName } from "#/util/text.js";
 
 const cache = new Map<string, ReturnType<typeof get>>();
 
-const throwsRegex = /^\w*Exception/;
+const throwsRegex = /@throws\s+\{@link\s+([^}]+)\}/g;
 
 export function getCommands(
   input: Pick<ScannedSdkShape, "sdkName" | "classes">
@@ -24,17 +24,20 @@ const get = (
   input: Pick<ScannedSdkShape, "classes">
 ) =>
   pipe(
-    Array.filterMap(input.classes, cls => {
+    input.classes,
+    Array.filterMap(cls => {
       let originName = cls.getName();
       if (!originName?.endsWith("Command")) return Option.none();
       originName = originName.slice(0, originName.length - 7);
       const methodName = makePrettyOperationName(originName);
-      const jsDocTags = cls.getJsDocs().flatMap(jsDoc => jsDoc.getTags());
+      const comment = cls.getLeadingCommentRanges().flatMap(_ => _.getText()).join("\n");
       const exceptions = [] as string[];
-      for (const doc of jsDocTags) {
-        const match = doc.getCommentText()?.match(throwsRegex);
-        if (match?.[0]) exceptions.push(match[0])
+      const matched = comment.matchAll(throwsRegex);
+
+      if (matched) {
+        exceptions.push(...matched.map(_ => _.at(1)!));
       }
+
       return Option.some({
         methodName, originName,
         inputClassName: String.snakeToPascal(originName),

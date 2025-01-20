@@ -14,6 +14,7 @@
     "resolveJsonModule": true,
     "noEmit": true,
     "baseUrl": ".",
+    "noErrorTruncation": true,
     "paths": {
       "#/*": ["./src/*"],
       "#example/*": ["./example/*"]

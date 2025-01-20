@@ -8,8 +8,12 @@ export const writeHeadPart = (
 
   out.addImportDeclarations([
     {
-      namedImports: ["Context", "Micro"],
-      moduleSpecifier: `effect`,
+      namespaceImport: "Micro",
+      moduleSpecifier: `effect/Micro`,
+    },
+    {
+      namespaceImport: "Context",
+      moduleSpecifier: `effect/Context`,
     },
     {
       namespaceImport: "Sdk",
@@ -21,11 +25,11 @@ export const writeHeadPart = (
 
         let caret = 0;
         writer.newLine();
-        writer.writeLine(`${clientClass.getName()} as _SdkClient, ${exceptionClass.getName()},`);
+        writer.writeLine(`${clientClass.getName()} as _SdkClient, ${exceptionClass.getName()} as _ServiceBaseError,`);
         for (const command of getCommands()) {
           writer.write(command.inputClassName + "Command")
           writer.write(", ");
-          if (caret == 2) {
+          if (caret == 3) {
             caret = 0;
             writer.write("\n");
           }

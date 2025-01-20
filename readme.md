@@ -1,97 +1,108 @@
 [![NPM Version](https://img.shields.io/npm/v/%40effect-ak%2Faws-sdk)](https://www.npmjs.com/package/@effect-ak/aws-sdk)
 ![NPM Downloads](https://img.shields.io/npm/dw/%40effect-ak%2Faws-sdk)
 
-## Usage
+## Motivation
 
-### Install aws-sdk dependencies
+Here, I want to briefly explain the purpose of this generator.
 
-Install any @aws-sdk/client-* libraries into your project or skip it if you already have some
+I want to write scripts that assume there will be many errors, from which recovery is necessary, and to follow different scenarios.
+
+The AWS SDK throws errors, and writing such code becomes inconvenient.
+
+There is a very cool and powerful library called Effect, which offers a way to handle errors like this: [Effect Error Management](https://effect.website/docs/error-management/expected-errors/).
+
+## Usage Example
+
+The `createBucketOrUpdateTag` function creates an S3 bucket.
+
+If AWS S3 returns an error indicating that the bucket already exists, the function updates the `triedToCreate` tag with the current date and time.
+
+This example doesn't have a real-world use case but showcases how a complex workflow can be built based on expected errors.
+
+```typescript
+import { makeS3Client, s3, S3ClientTag } from "./generated/s3.js";
+import { Effect, Layer } from "effect";
+
+// Create or update bucket tag
+const createBucketOrUpdateTag = Effect.gen(function* () {
+  const bucketName = "hello-effect";
+
+  const updateTag = 
+    s3("put_bucket_tagging", { 
+      Bucket: bucketName,
+      Tagging: {
+        TagSet: [
+          { Key: "triedToCreate", Value: new Date().toISOString() }
+        ]
+      }
+    }).pipe(
+      Effect.orDie
+    );
+
+  return yield* (
+    s3("create_bucket", { Bucket: bucketName }).pipe(
+      Effect.catchIf(error => error.is("BucketAlreadyExists"), () => updateTag),
+      Effect.catchIf(error => error.is("BucketAlreadyOwnedByYou"), () => updateTag)
+    )
+  );
+});
+
+// Run the effect
+createBucketOrUpdateTag.pipe(
+  Effect.provideServiceEffect(S3ClientTag, makeS3Client({})),
+  Effect.runPromise
+).finally(() => {
+  console.info("done");
+});
+```
+
+## Getting started
 
 ### Install this package
 
 You can install this package either locally or globally
-```
+```bash
 npm i -D @effect-ak/aws-sdk
-// or
+# or
 npm i -g @effect-ak/aws-sdk
 ```
 
-### Setup config [Optional]
+### Install AWS SDK Clients
 
-create file `aws-sdk.json` with following structure:
-```
-{
-  "generate_to": "example/generated", // where to place generated files
-  "clients": [ "lambda" ] // generate only these clients (all available by default)
+> The generated code depends on `@aws-sdk/client-*` packages, so they must be installed in `node_modules`.
+
+**Example:**
+```json
+"devDependencies": {
+  "@aws-sdk/client-s3": "3.709.0"
 }
 ```
 
-### Run generation
+### Setup generator configuration [Optional]
 
+Create a file named `aws-sdk.json` with the following structure:
+
+```json
+{
+  "generate_to": "example/generated", // Specifies where to place generated files
+  "clients": ["lambda"] // Specifies which clients to generate (all available in node_modules by default)
+}
 ```
-//if @effect-ak/aws-sdk installed locally
-./node-modules/.bin/gen-aws-sdk
 
-//if installed globally
+### Run Generation
+
+```bash
+# If @effect-ak/aws-sdk is installed locally
+./node_modules/.bin/gen-aws-sdk
+
+# If installed globally
 gen-aws-sdk
 ```
 
-### Usage example
+## A Little Story
 
-```typescript
-import { makeS3Client, s3, S3ClientTag } from "./generated/s3.js";
+The AWS SDK also generates `@aws-sdk/client-*` libraries. They have their own project for this: [Smithy](https://smithy.io/2.0/index.html).
 
-import { Effect, Layer } from "effect";
+There is a specification for each service: [AWS SDK JS V3 Codegen Models](https://github.com/aws/aws-sdk-js-v3/tree/main/codegen/sdk-codegen/aws-models).
 
-// Create a layer with sdk clients
-const live =
-  Layer.mergeAll(
-    Layer.effect(S3ClientTag, makeS3Client({})),
-  );
-
-// Use s3
-const createBucketOrUpdateTag =
-  Effect.gen(function* () {
-
-    const bucketName = "hello-effect";
-
-    const updateTag = 
-      s3("put_bucket_tagging", { 
-        Bucket: bucketName,
-        Tagging: {
-          TagSet: [
-            { Key: "date", Value: new Date().toISOString() }
-          ]
-        }
-      })
-
-    return yield* (
-      s3("create_bucket", { Bucket: bucketName  }).pipe(
-        Effect.catchTags({
-          S3BucketAlreadyExists: () => updateTag,
-          S3BucketAlreadyOwnedByYou: () => updateTag
-        })
-      )
-    );
-
-  });
-
-// Run effect
-createBucketOrUpdateTag.pipe(
-  Effect.provide(live),
-  Effect.runPromise
-).finally(() => {
-  console.info("done")
-});
-
-```
-
-## Motivation
-
-I wanted to work with the AWS SDK using effects instead of promises. The main drawback of AWS SDK libraries that rely on promises is error handling. For example, when using the SDK to create a function that already exists, we might want to update the function's code instead of failing with an exception. Implementing such straightforward scenarios is very cumbersome with promises, whereas `effect-ts` allows you to seamlessly write complex workflows without increasing the complexity of understanding the code.
-
-This library provides the following features:
-
-- **Code Generation**: Generates wrapper clients that utilize effects (`effect-ts`).
-- **Operation Discovery**: Identifies all available operations along with their input parameters and outputs.
-- **Error Handling**: Detects all error classes and determines which methods throw which errors (as specified in JSDoc comments). This allows us to capture all expected errors and integrate them into the effect error channel.
+I thought about writing my own generator that would parse the JSON specification, but it turned out to be easier to write a wrapper for the generated code.

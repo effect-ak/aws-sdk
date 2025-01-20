@@ -30,26 +30,26 @@ export const writeSdkPart = (
 
         for (const cmd of commands) {
 
-          const replaceName = (name: string) =>
-            name.startsWith(clientName) ?
-              name.replace("Exception", "Error") :
-              `${clientName}${name.replace("Exception", "Error")}`;
-
           const errors =
             pipe(
-              Array.filterMap(cmd.throws, name => {
-                if (!exceptionNames.has(name)) {
-                  return Option.none()
-                };
-                return Option.some(replaceName(name).replace("ErrorError", "Error"))
+              cmd.throws,
+              Array.filterMap(name => {
+                if (!exceptionNames.has(name)) return Option.none();
+                if (name.endsWith("ServiceException")) return Option.none();
+                return Option.some(name)
               }),
               Array.dedupe
             );
-            
+
+          const errorsType =
+            errors.length == 0 ? "never" : `{
+              ${errors.map(e => `"${e}": Sdk.${e}`).join(",\n")}
+            }`
+
           writer.writeLine(`${cmd.methodName}: [
             Sdk.${cmd.inputClassName}CommandInput,
             Sdk.${cmd.originName}CommandOutput,
-            ${errors.length > 0 ? `[ \n${ errors.join(",\n") }\n ][number]`: "AllErrors" }
+            ${errorsType}
           ]`);
 
         }

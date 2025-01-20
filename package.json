@@ -1,6 +1,6 @@
 {
   "name": "@effect-ak/aws-sdk",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "author": {
     "name": "Aleksandr Kondaurov",
     "email": "kondaurov.dev@gmail.com"
@@ -22,7 +22,7 @@
     "gen-aws-sdk": "./dist/generate.js"
   },
   "dependencies": {
-    "ts-morph": "^24.0.0",
+    "ts-morph": "^25.0.0",
     "effect": "^3.10.0"
   },
   "devDependencies": {

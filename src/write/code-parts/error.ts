@@ -1,113 +1,45 @@
 import type { ScannedSdk } from "#/scan-sdk/_model.js";
 import type { TypeNames, TypescriptSourceFile } from "#/type.js";
-import { VariableDeclarationKind } from "ts-morph";
 
 export const writeErrorPart = (
-  { getExceptions }: ScannedSdk,
-  { clientName }: TypeNames,
+  { }: ScannedSdk,
+  { clientName, clientApiInterface }: TypeNames,
   out: TypescriptSourceFile
 ) => {
 
-  const exceptions = getExceptions();
-
-  out.addClass({
-    isExported: true,
-    name: `${clientName}UnknownError`,
-    properties: [
-      {
-        isReadonly: true,
-        name: "_tag",
-        initializer: `"${clientName}UnknownError"`
-      }
-    ],
-    ctors: [
-      {
-        parameters: [
-          {
-            isReadonly: true,
-            name: "cause",
-            type: `unknown`
-          }
-        ]
-      }
-    ]
-  }).formatText({ indentSize: 2 });
-
-  for (const exception of exceptions) {
-    let errorName = exception.props.find(_ => _.name == "name")?.type;
-    errorName = errorName?.replace("Exception", "");
-
-    if (!errorName) continue;
-
-    let name = `${clientName}${errorName}`;
-
-    if (!name.endsWith("Error")) name = `${name}Error`;
+  out.addStatements(`
+    type UnionToIntersection<U> =
+      (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never;
     
-    out.addClass({
-      isExported: true,
-      name,
-      properties: [
-        {
-          isReadonly: true,
-          name: "_tag",
-          initializer: `"${clientName}${errorName}"`
-        }
-      ],
-      ctors: [
-        {
-          parameters: [
-            {
-              isReadonly: true,
-              name: "cause",
-              type: `Sdk.${exception.className}`
-            }
-          ]
-        }
-      ]
-    }).formatText({ indentSize: 2 });
-
-  };
-
-  out.addTypeAlias({
-    name: "AllErrorKeys",
-    type: "keyof typeof allErrors"
-  });
-
-  out.addFunction({
-    name: "isErrorKey",
-    parameters: [
-      {
-        name: "input",
-        type: "string"
+    type ${clientName}Errors = UnionToIntersection<{
+      [C in keyof ${clientApiInterface}]: ${clientApiInterface}[C][2] extends never ? {} : {
+        [E in keyof ${clientApiInterface}[C][2]]: ${clientApiInterface}[C][2][E]
       }
-    ],
-    returnType: "input is AllErrorKeys",
-    statements: "return input in allErrors"
-  });
+    }[keyof ${clientApiInterface}]> extends infer I ? { [K in keyof I]: I[K] } : never;
+  `).forEach(_ => _.formatText());
 
-  out.addTypeAlias({
-    name: "AllErrors",
-    type: "InstanceType<typeof allErrors[keyof typeof allErrors]>"
-  });
-
-  out.addVariableStatement({
-    declarationKind: VariableDeclarationKind.Const,
-    declarations: [
-      {
-        name: "allErrors",
-        initializer: writer =>
-          writer.inlineBlock(() => {
-            for (const exception of exceptions) {
-              const errorName = 
-                exception.baseName.startsWith(clientName) ?
-                `${exception.baseName}Error` :
-                `${clientName}${exception.baseName}Error`;
-
-              writer.writeLine(`${exception.className}: ${errorName},`)
-            }
-          })
+  out.addStatements(`
+    export class ${clientName}Error<C extends keyof ${clientApiInterface}, E extends _ServiceBaseError = _ServiceBaseError> {
+      readonly _tag = "${clientName}Error";
+    
+      constructor(
+        readonly cause: E,
+        readonly command: C
+      ) {}
+    
+      $is<N extends keyof ${clientName}Api[C][2]>(
+        name: N
+      ): this is ${clientName}Error<C, ${clientName}Api[C][2][N] & _ServiceBaseError> {
+        return this.cause.name == name;
       }
-    ]
-  }).formatText({ indentSize: 2 });
+
+      is<N extends keyof ${clientName}Errors>(
+        name: N
+      ): this is ${clientName}Error<C, ${clientName}Errors[N]> {
+        return this.cause.name == name;
+      }
+
+    }
+  `).at(0)?.formatText();
 
 }
