@@ -16,7 +16,7 @@ const getRole =
       yield* pipe(
         iam("get_role", { RoleName: "Function1" }),
         Effect.andThen(_ => _.Role),
-        Effect.catchTag("IAMNoSuchEntity", () => {
+        Effect.catchIf(_ => _.$is("NoSuchEntityException"), () => {
 
           const create =
             iam("create_role", {
@@ -64,7 +64,7 @@ const createFunction =
       FunctionName: fnName,
       Handler: "index.handler"
     }).pipe(
-      Effect.catchTag("LambdaResourceConflict", () =>
+      Effect.catchIf(_ => _.$is("ResourceConflictException"), () =>
         lambda("update_function_code", {
           FunctionName: fnName,
           ZipFile: code
