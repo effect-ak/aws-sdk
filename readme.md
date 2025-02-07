@@ -3,13 +3,11 @@
 
 ## Motivation
 
-Here, I want to briefly explain the purpose of this generator.
+AWS SDK libraries are not convenient to use because they rely on Promises, which do not describe possible errors.
 
-I want to write scripts that assume there will be many errors, from which recovery is necessary, and to follow different scenarios.
+This tool generates wrapper code for AWS SDK, making it easier to work with [Effect](https://effect.website).
 
-The AWS SDK throws errors, and writing such code becomes inconvenient.
-
-There is a very cool and powerful library called Effect, which offers a way to handle errors like this: [Effect Error Management](https://effect.website/docs/error-management/expected-errors/).
+[Effect Error Management](https://effect.website/docs/error-management/expected-errors/)
 
 ## Usage Example
 
@@ -19,9 +17,11 @@ If AWS S3 returns an error indicating that the bucket already exists, the functi
 
 This example doesn't have a real-world use case but showcases how a complex workflow can be built based on expected errors.
 
+> More practical example can be found [here](https://github.com/kondaurovDev/effect-tg-bot/tree/main/scripts/deploy)
+
 ```typescript
-import { makeS3Client, s3, S3ClientTag } from "./generated/s3.js";
-import { Effect, Layer } from "effect";
+import { Effect } from "effect";
+import { s3 } from "./generated/s3.js";
 
 // Create or update bucket tag
 const createBucketOrUpdateTag = Effect.gen(function* () {
@@ -49,7 +49,6 @@ const createBucketOrUpdateTag = Effect.gen(function* () {
 
 // Run the effect
 createBucketOrUpdateTag.pipe(
-  Effect.provideServiceEffect(S3ClientTag, makeS3Client({})),
   Effect.runPromise
 ).finally(() => {
   console.info("done");
@@ -80,12 +79,11 @@ npm i -g @effect-ak/aws-sdk
 
 ### Setup generator configuration [Optional]
 
-Create a file named `aws-sdk.json` with the following structure:
+Create a file named `aws-sdk.json` and define generator config:
 
 ```json
 {
-  "generate_to": "example/generated", // Specifies where to place generated files
-  "clients": ["lambda"] // Specifies which clients to generate (all available in node_modules by default)
+  "$schema": "https://esm.sh/@effect-ak/aws-sdk@0.2.0/dist/schema.json"
 }
 ```
 
@@ -99,10 +97,10 @@ Create a file named `aws-sdk.json` with the following structure:
 gen-aws-sdk
 ```
 
-## A Little Story
+### AWS SDK libraries are generated as well
 
 The AWS SDK also generates `@aws-sdk/client-*` libraries. They have their own project for this: [Smithy](https://smithy.io/2.0/index.html).
 
 There is a specification for each service: [AWS SDK JS V3 Codegen Models](https://github.com/aws/aws-sdk-js-v3/tree/main/codegen/sdk-codegen/aws-models).
 
-I thought about writing my own generator that would parse the JSON specification, but it turned out to be easier to write a wrapper for the generated code.
+> I thought about writing my own generator that would parse the JSON specification, but it turned out to be easier to write a wrapper for the generated code.

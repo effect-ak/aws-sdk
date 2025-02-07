@@ -1,13 +1,7 @@
-import { makeLambdaClient, LambdaClientTag, lambda } from "./generated/lambda.js";
-import { makeIAMClient, IAMClientTag, iam } from "./generated/iam.js";
+import { lambda } from "./generated/lambda.js";
+import { iam } from "./generated/iam.js";
 import { readFile } from "fs/promises";
-import { Effect, Layer, pipe } from "effect";
-
-const live =
-  Layer.mergeAll(
-    Layer.effect(LambdaClientTag, makeLambdaClient({})),
-    Layer.effect(IAMClientTag, makeIAMClient({}))
-  );
+import { Effect, pipe } from "effect";
 
 const getRole = 
   Effect.gen(function* () {
@@ -80,8 +74,7 @@ const createFunction =
   )
 
 createFunction.pipe(
-  Effect.provide(live),
-  Effect.runPromise  
+  Effect.runPromise
 ).finally(() => {
   console.info("done")
 });

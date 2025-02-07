@@ -14,7 +14,7 @@ export class WriteService
     effect:
       Effect.gen(function* () {
 
-        const { generate_to } = yield* ConfigProviderService;
+        const { generate_to, client_defaults } = yield* ConfigProviderService;
 
         const project = new Project({
           manipulationSettings: {
@@ -35,7 +35,7 @@ export class WriteService
             const typeNames = getTypeNames(scannedSdk);
         
             writeHeadPart(scannedSdk, out);
-            writeEffectPart(scannedSdk, typeNames, out);
+            writeEffectPart(scannedSdk, typeNames, client_defaults, out);
             writeErrorPart(scannedSdk, typeNames, out);
             writeSdkPart(scannedSdk, typeNames, out);
 

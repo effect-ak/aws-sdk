@@ -1,15 +1,19 @@
+import type { ClientDefauts } from "#/config-provider/schema";
 import type { ScannedSdk } from "#/scan-sdk/_model.js";
 import type { TypeNames, TypescriptSourceFile } from "#/type.js";
 
 export const writeEffectPart = (
   { configInterface, sdkName }: ScannedSdk,
   { clientName, clientApiInterface, commandsFactory }: TypeNames,
+  clientDefaults: ClientDefauts,
   out: TypescriptSourceFile,
 ) => {
 
+  const makeClientFunctionName = `make${clientName}Client`;
+
   out.addFunction({
     isExported: true,
-    name: `make${clientName}Client`,
+    name: makeClientFunctionName,
     parameters: [
       {
         name: "config",
@@ -30,9 +34,18 @@ export const writeEffectPart = (
 
   out.addClass({
     isExported: true,
-    name: `${clientName}ClientTag`,
-    extends: `Context.Tag("${clientName}Client")<${clientName}ClientTag, _SdkClient>()`
-  });
+    name: `${clientName}Client`,
+    extends: `
+      Context.Reference<${clientName}Client>()(
+          "${clientName}Client",
+          {
+            defaultValue() {
+              return ${makeClientFunctionName}(${JSON.stringify(clientDefaults, undefined, 2)}).pipe(Micro.runSync);
+            }
+          }
+        )
+    `
+  }).formatText();
 
   out.addFunction({
     isExported: true,
@@ -56,7 +69,7 @@ export const writeEffectPart = (
     statements: `
       return Micro.gen(function* () {
 
-        const client = yield* Micro.service(${clientName}ClientTag);
+        const client = yield* Micro.service(${clientName}Client);
 
         const command = new ${commandsFactory}[actionName](actionInput);
 

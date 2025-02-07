@@ -15,7 +15,8 @@ export class ConfigProviderService
 
         const config = {
           generate_to: definedConfig.generate_to ?? "src/generated",
-          clients: definedConfig.clients ?? clientsInPackageJson
+          clients: definedConfig.clients ?? clientsInPackageJson,
+          client_defaults: definedConfig.client_defaults
         } as const;
 
         yield* Effect.logInfo("config", config)

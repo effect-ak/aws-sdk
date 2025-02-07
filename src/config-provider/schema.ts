@@ -1,7 +1,10 @@
 import { Schema as S } from "effect";
 
-export const GenerateConfigSchema =
+export type ClientDefauts = typeof MainConfigSchema.Type.client_defaults
+
+export const MainConfigSchema =
   S.Struct({
+    $schema: S.NonEmptyString,
     generate_to:
       S.propertySignature(S.String).annotations({
         title: "Generate to",
@@ -9,10 +12,16 @@ export const GenerateConfigSchema =
         default: "src/generated"
       }),
     clients:
-      S.propertySignature(S.NonEmptyArray(S.String)).annotations({
+      S.propertySignature(S.NonEmptyArray(S.NonEmptyString)).annotations({
         title: "Clients",
         description: "Generate only these clients",
       }),
+    client_defaults: 
+      S.Struct({
+        region: S.NonEmptyString
+      }).pipe(
+        S.partial
+      )
   }).pipe(S.partial);
 
 export const PackageJsonSchema =

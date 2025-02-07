@@ -1,6 +1,6 @@
 import { Effect, pipe, Schema as S, Array, Option } from "effect";
 import { readFile } from "fs/promises";
-import { GenerateConfigSchema, PackageJsonSchema } from "./schema.js";
+import { MainConfigSchema, PackageJsonSchema } from "./schema.js";
 
 export const readConfiguration =
   Effect.gen(function* () {
@@ -9,7 +9,7 @@ export const readConfiguration =
       yield* pipe(
         readFileContent("aws-sdk.json"),
         Effect.andThen(_ => _ ?? "{}"),
-        Effect.andThen(S.decodeUnknown(S.parseJson(GenerateConfigSchema)))
+        Effect.andThen(S.decodeUnknown(S.parseJson(MainConfigSchema)))
       );
     
     const packageJson =

@@ -1,11 +1,10 @@
-import { makeS3Client, s3, S3ClientTag } from "./generated/s3.js";
-
 import { Effect } from "effect";
+import { s3 } from "./generated/s3.js";
 
 const getBucketOrUpdateTag =
   Effect.gen(function* () {
 
-    const bucketName = "hello-effect";
+    const bucketName = "hello-effect-2";
 
     const updateTag = 
       s3("put_bucket_tagging", { 
@@ -29,7 +28,6 @@ const getBucketOrUpdateTag =
   });
 
 getBucketOrUpdateTag.pipe(
-  Effect.provideServiceEffect(S3ClientTag, makeS3Client({})),
   Effect.runPromise
 ).finally(() => {
   console.info("done")
