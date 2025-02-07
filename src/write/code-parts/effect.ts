@@ -40,7 +40,7 @@ export const writeEffectPart = (
           "${clientName}Client",
           {
             defaultValue() {
-              return ${makeClientFunctionName}(${JSON.stringify(clientDefaults, undefined, 2)}).pipe(Micro.runSync);
+              return ${makeClientFunctionName}(${JSON.stringify(clientDefaults ?? {}, undefined, 2)}).pipe(Micro.runSync);
             }
           }
         )
