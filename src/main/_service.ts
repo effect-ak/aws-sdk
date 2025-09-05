@@ -1,7 +1,7 @@
 import { Effect, pipe } from "effect";
-import { ConfigProviderService } from "#/config-provider/_service.js";
-import { WriteService } from "#/write/_service.js";
-import { ScannedSdk } from "#/scan-sdk/_model.js";
+import { ConfigProviderService } from "~/config-provider/_service";
+import { WriteService } from "~/write/_service";
+import { ScannedSdk } from "~/scan-sdk/_model";
 
 export class MainService
   extends Effect.Service<MainService>()("MainService", {
@@ -14,13 +14,13 @@ export class MainService
         const generateOneClient = 
           (client: string) => pipe(
             ScannedSdk.fromNodeModules(client),
-            Effect.andThen(writeCode)
+            Effect.andThen(writeCode),
+            Effect.andThen(client)
           );
 
         const generateAllClients =
           Effect.forEach(clients, generateOneClient, {
-            concurrency: 3,
-            discard: true
+            concurrency: 3
           });
 
         return {

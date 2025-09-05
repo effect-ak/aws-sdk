@@ -1,5 +1,5 @@
 import { pipe, Array, Option } from "effect";
-import type { ScannedSdkShape } from "./_model.js";
+import type { ScannedSdkShape } from "./_model";
 
 const cache = new Map<string, ReturnType<typeof getFiltered>>();
 

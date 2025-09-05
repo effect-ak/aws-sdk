@@ -1,5 +1,5 @@
-import type { ScannedSdk } from "#/scan-sdk/_model.js";
-import type { TypeNames, TypescriptSourceFile } from "#/type.js";
+import type { ScannedSdk } from "~/scan-sdk/_model";
+import type { TypeNames, TypescriptSourceFile } from "~/type";
 
 export const writeErrorPart = (
   { }: ScannedSdk,
@@ -19,23 +19,23 @@ export const writeErrorPart = (
   `).forEach(_ => _.formatText());
 
   out.addStatements(`
-    export class ${clientName}Error<C extends keyof ${clientApiInterface}, E extends _ServiceBaseError = _ServiceBaseError> {
+    export class ${clientName}Error<C extends keyof ${clientApiInterface}> {
       readonly _tag = "${clientName}Error";
     
       constructor(
-        readonly cause: E,
+        readonly cause: _ServiceBaseError,
         readonly command: C
       ) {}
     
       $is<N extends keyof ${clientName}Api[C][2]>(
         name: N
-      ): this is ${clientName}Error<C, ${clientName}Api[C][2][N] & _ServiceBaseError> {
+      ): this is ${clientName}Error<C> {
         return this.cause.name == name;
       }
 
       is<N extends keyof ${clientName}Errors>(
         name: N
-      ): this is ${clientName}Error<C, ${clientName}Errors[N]> {
+      ): this is ${clientName}Error<C> {
         return this.cause.name == name;
       }
 

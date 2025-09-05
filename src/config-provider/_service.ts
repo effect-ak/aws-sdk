@@ -1,6 +1,6 @@
 import { Effect } from "effect";
 
-import { readConfiguration } from "./read-files.js";
+import { readConfiguration } from "./read-files";
 
 export class ConfigProviderService
   extends Effect.Service<ConfigProviderService>()("ConfigProviderService", {
@@ -16,10 +16,10 @@ export class ConfigProviderService
         const config = {
           generate_to: definedConfig.generate_to ?? "src/generated",
           clients: definedConfig.clients ?? clientsInPackageJson,
-          client_defaults: definedConfig.client_defaults
+          global: definedConfig.global
         } as const;
 
-        yield* Effect.logInfo("config", config)
+        yield* Effect.logInfo("current config", config)
 
         return config;
 

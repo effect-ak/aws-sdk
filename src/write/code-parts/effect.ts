@@ -1,111 +1,56 @@
-import type { ClientDefauts } from "#/config-provider/schema";
-import type { ScannedSdk } from "#/scan-sdk/_model.js";
-import type { TypeNames, TypescriptSourceFile } from "#/type.js";
+import type { MainConfig } from "~/config-provider/schema";
+import type { ScannedSdk } from "~/scan-sdk/_model";
+import type { TypeNames, TypescriptSourceFile } from "~/type";
 
 export const writeEffectPart = (
   { configInterface, sdkName }: ScannedSdk,
   { clientName, clientApiInterface, commandsFactory }: TypeNames,
-  clientDefaults: ClientDefauts,
+  clientDefaults: MainConfig['global'],
   out: TypescriptSourceFile,
 ) => {
 
-  const makeClientFunctionName = `make${clientName}Client`;
+  const classClientName = `${clientName}Client`
 
-  out.addFunction({
-    isExported: true,
-    name: makeClientFunctionName,
-    parameters: [
-      {
-        name: "config",
-        type: `Sdk.${configInterface.getName()}`
-      }
-    ],
-    statements: `
-      return Micro.try({
-        try: () => new _SdkClient(config),
-        catch: _ => _
-      }).pipe(
-        Micro.orDie
-      )
-    `
-  }).formatText({
-    indentSize: 2
-  });
-
-  out.addClass({
-    isExported: true,
-    name: `${clientName}Client`,
-    extends: `
-      Context.Reference<${clientName}Client>()(
-          "${clientName}Client",
-          {
-            defaultValue() {
-              return ${makeClientFunctionName}(${JSON.stringify(clientDefaults ?? {}, undefined, 2)}).pipe(Micro.runSync);
-            }
-          }
-        )
-    `
-  }).formatText();
-
-  out.addFunction({
-    isExported: true,
-    name: sdkName.replace("-", "_"),
-    typeParameters: [
-      {
-        name: "M",
-        constraint: `keyof ${clientApiInterface}`
-      }
-    ],
-    parameters: [
-      {
-        name: "actionName",
-        type: "M"
-      },
-      {
-        name: "actionInput",
-        type: `${clientApiInterface}[M][0]`
-      }
-    ],
-    statements: `
-      return Micro.gen(function* () {
-
-        const client = yield* Micro.service(${clientName}Client);
-
-        const command = new ${commandsFactory}[actionName](actionInput);
-
-        return yield* Micro.tryPromise({
-          try: () => {
-            console.debug("${clientName}", { actionName });
-            return client.send(command) as Promise<${clientApiInterface}[M][1]>
-          },
-          catch: error => {
-            if (error instanceof _ServiceBaseError) {
-              return new ${clientName}Error(error, actionName);
-            } else {
-              return { _tag: "#Defect", error } as const;
-            }
-          }
-        }).pipe(
-          Micro.catchTag("#Defect", _ => Micro.die(_)),
-          Micro.tap((result) => {
-            console.debug("${clientName}, success", {
-              actionName,
-              statusCode: result.$metadata.httpStatusCode
-            });
-          }),
-          Micro.tapError(error => {
-            console.debug("${clientName}, error", {
-              actionName,
-              name: error.cause.name,
-              message: error.cause.message,
-              statusCode: error.cause.$metadata.httpStatusCode
-            });
-            return Micro.void;
+  out.addStatements(`
+    export class ${classClientName} extends Context.Tag('${classClientName}')<${classClientName}, _SdkClient> () {
+    
+      static Default = (
+        config?: Sdk.${configInterface.getName()}
+      ) =>
+        Layer.effect(
+          ${classClientName},
+          Effect.gen(function* () {
+            return new _SdkClient({
+              ${clientDefaults?.region ? `...{ region: "${clientDefaults.region}" },` : '...{},'}
+              ...config
+            })
           })
-        );
+        )
+    }
+  `).forEach(_ => _.formatText())
 
+  const mainFn = sdkName.replace("-", "_")
+
+  out.addStatements(`
+    export const ${mainFn} =
+      Effect.fn('asw_${clientName}')(function* <M extends keyof ${clientApiInterface}>(
+        actionName: M, actionInput: ${clientApiInterface}[M][0]
+      ) {
+        const client = yield* ${classClientName}
+        const command = new ${commandsFactory}[actionName](actionInput)
+        yield* Effect.logDebug(\`${clientName}_\${actionName}\`)
+        return yield* Fn.pipe(
+          Effect.tryPromise(() => client.send(command) as Promise<${clientApiInterface}[M][1]>),
+          Effect.catchTag('UnknownException', (exception) => {
+            if (exception.error instanceof _ServiceBaseError) {
+              return Effect.fail(new ${clientName}Error(exception.error, actionName))
+            } else {
+              return Effect.die(exception.error)
+            }
+          }),
+          Effect.tap(response => Effect.logDebug(\`${clientName}_\${actionName}\`, response))
+        )
       })
-    `
-  }).formatText();
+  `).forEach(_ => _.formatText())
 
 }

@@ -1,5 +1,5 @@
-import { assert, describe, expect, it } from "vitest";
-import { ScannedSdk } from "#/scan-sdk/_model.js";
+import { assert, describe, it } from "vitest";
+import { ScannedSdk } from "~/scan-sdk/_model";
 
 describe("scan", () => {
 

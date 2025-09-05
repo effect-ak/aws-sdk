@@ -1,4 +1,4 @@
-import type { ScannedSdkShape } from "#/scan-sdk/_model.js";
+import type { ScannedSdkShape } from "~/scan-sdk/_model";
 
 export function getTypeNames(
   input: Pick<ScannedSdkShape, "clientClass">

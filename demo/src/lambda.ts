@@ -1,7 +1,7 @@
-import { lambda } from "./generated/lambda.js";
-import { iam } from "./generated/iam.js";
-import { readFile } from "fs/promises";
 import { Effect, pipe } from "effect";
+import { readFile } from "fs/promises";
+import { lambda, LambdaClient } from "./effect-aws-sdk/lambda";
+import { iam, IAMClient } from "./effect-aws-sdk/iam";
 
 const getRole = 
   Effect.gen(function* () {
@@ -74,6 +74,10 @@ const createFunction =
   )
 
 createFunction.pipe(
+  Effect.provide([
+    LambdaClient.Default(),
+    IAMClient.Default()
+  ]),
   Effect.runPromise
 ).finally(() => {
   console.info("done")

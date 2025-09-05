@@ -1,6 +1,6 @@
 import { pipe, String, Array, Option, Order } from "effect";
-import type { ScannedSdkShape } from "./_model.js";
-import { makePrettyOperationName } from "#/util/text.js";
+import type { ScannedSdkShape } from "./_model";
+import { makePrettyOperationName } from "~/util/text";
 
 const cache = new Map<string, ReturnType<typeof get>>();
 

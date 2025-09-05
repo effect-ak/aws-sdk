@@ -1,6 +1,6 @@
 import { Either } from "effect";
 import * as Morph from "ts-morph";
-import type { ScannedSdkShape } from "./_model.js";
+import type { ScannedSdkShape } from "./_model";
 
 export const scanNodeModules = (
   clientName: string
@@ -25,10 +25,10 @@ export const scanNodeModules = (
   const classes = sources.right.flatMap(_ => _.getClasses());
   const interfaces = sources.right.flatMap(_ => _.getInterfaces());
 
-  console.log(clientName, {
-    classesNumber: classes.length,
-    interfacesNumber: interfaces.length
-  })
+  // console.log(clientName, {
+  //   classesNumber: classes.length,
+  //   interfacesNumber: interfaces.length
+  // })
 
   const exceptionClass = classes.find(_ => _.getName()?.endsWith("ServiceException"));
 

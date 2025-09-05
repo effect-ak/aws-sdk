@@ -1,9 +1,9 @@
 import { Data, Either } from "effect";
 import * as Morph from "ts-morph";
 
-import { scanNodeModules } from "./node-modules.js";
-import { getCommands } from "./commands.js";
-import { getExceptions } from "./exceptions.js";
+import { scanNodeModules } from "./node-modules";
+import { getCommands } from "./commands";
+import { getExceptions } from "./exceptions";
 
 export interface ScannedSdkShape {
   sdkName: string,

@@ -1,6 +1,6 @@
 import { describe, it, assert, expect } from "vitest"
 import { Effect } from "effect";
-import { ConfigProviderService } from "#/config-provider/_service.js";
+import { ConfigProviderService } from "~/config-provider/_service";
 
 describe("configuration provider", () => {
 

@@ -1,5 +1,5 @@
-import { makeS3Client, s3, S3ClientTag } from "#example/generated/s3";
 import { Effect } from "effect";
+import { s3, S3Client } from "demo/effect-aws-sdk/s3";
 import { assert, describe, expect, it } from "vitest";
 
 describe("s3", () => {
@@ -18,7 +18,9 @@ describe("s3", () => {
           );
 
       }).pipe(
-        Effect.provideServiceEffect(S3ClientTag, makeS3Client({})),
+        Effect.provide([
+          S3Client.Default()
+        ]),
         Effect.runPromiseExit
       );
 
@@ -43,7 +45,9 @@ describe("s3", () => {
 
       }).pipe(
         Effect.catchIf(_ => _.cause.$metadata.httpStatusCode == 412, () => Effect.logInfo("already exists")),
-        Effect.provideServiceEffect(S3ClientTag, makeS3Client({})),
+        Effect.provide([
+          S3Client.Default()
+        ]),
         Effect.runPromiseExit
       );
 

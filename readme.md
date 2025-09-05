@@ -3,57 +3,7 @@
 
 ## Motivation
 
-AWS SDK libraries are not convenient to use because they rely on Promises, which do not describe possible errors.
-
-This tool generates wrapper code for AWS SDK, making it easier to work with [Effect](https://effect.website).
-
-[Effect Error Management](https://effect.website/docs/error-management/expected-errors/)
-
-## Usage Example
-
-The `createBucketOrUpdateTag` function creates an S3 bucket.
-
-If AWS S3 returns an error indicating that the bucket already exists, the function updates the `triedToCreate` tag with the current date and time.
-
-This example doesn't have a real-world use case but showcases how a complex workflow can be built based on expected errors.
-
-> More practical example can be found [here](https://github.com/kondaurovDev/effect-tg-bot/tree/main/scripts/deploy)
-
-```typescript
-import { Effect } from "effect";
-import { s3 } from "./generated/s3.js";
-
-// Create or update bucket tag
-const createBucketOrUpdateTag = Effect.gen(function* () {
-  const bucketName = "hello-effect";
-
-  const updateTag = 
-    s3("put_bucket_tagging", { 
-      Bucket: bucketName,
-      Tagging: {
-        TagSet: [
-          { Key: "triedToCreate", Value: new Date().toISOString() }
-        ]
-      }
-    }).pipe(
-      Effect.orDie
-    );
-
-  return yield* (
-    s3("create_bucket", { Bucket: bucketName }).pipe(
-      Effect.catchIf(error => error.is("BucketAlreadyExists"), () => updateTag),
-      Effect.catchIf(error => error.is("BucketAlreadyOwnedByYou"), () => updateTag)
-    )
-  );
-});
-
-// Run the effect
-createBucketOrUpdateTag.pipe(
-  Effect.runPromise
-).finally(() => {
-  console.info("done");
-});
-```
+If you use AWS SDK typescript libraries and [Effect-ts](https://effect.website/) then you might find this tool usefull
 
 ## Getting started
 

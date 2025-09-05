@@ -1,6 +1,6 @@
 import { Effect, pipe, Schema as S, Array, Option } from "effect";
 import { readFile } from "fs/promises";
-import { MainConfigSchema, PackageJsonSchema } from "./schema.js";
+import { MainConfigSchema, PackageJsonSchema } from "./schema";
 
 export const readConfiguration =
   Effect.gen(function* () {

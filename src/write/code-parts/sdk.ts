@@ -1,8 +1,8 @@
 import { Array, pipe, Option } from "effect";
 import { VariableDeclarationKind } from "ts-morph";
 
-import type { ScannedSdk } from "#/scan-sdk/_model.js";
-import type { TypeNames, TypescriptSourceFile } from "#/type.js";
+import type { ScannedSdk } from "~/scan-sdk/_model";
+import type { TypeNames, TypescriptSourceFile } from "~/type";
 
 export const writeSdkPart = (
   { getCommands, getExceptions, sdkName }: ScannedSdk,
@@ -13,7 +13,7 @@ export const writeSdkPart = (
   const commands = getCommands();
   const exceptionNames = new Set(getExceptions().map(_ => _.className));
 
-  console.log(sdkName, "exception names", exceptionNames);
+  // console.log(sdkName, "exception names", exceptionNames);
 
   out.addTypeAlias({
     isExported: true,

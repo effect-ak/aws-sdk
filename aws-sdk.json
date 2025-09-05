@@ -1,4 +1,0 @@
-{
-  "$schema": "https://esm.sh/@effect-ak/aws-sdk@0.1.0/dist/schema.json",
-  "generate_to": "example/generated"
-}

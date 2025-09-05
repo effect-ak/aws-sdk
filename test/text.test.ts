@@ -1,6 +1,6 @@
 import { it, describe, expect } from "vitest";
 
-import { makePrettyOperationName, makeProperPascalCase,  } from "#/util/text.js";
+import { makePrettyOperationName, makeProperPascalCase,  } from "~/util/text"
 
 describe("text test", () => {
 

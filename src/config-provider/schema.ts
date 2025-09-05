@@ -1,7 +1,6 @@
 import { Schema as S } from "effect";
 
-export type ClientDefauts = typeof MainConfigSchema.Type.client_defaults
-
+export type MainConfig = typeof MainConfigSchema.Type
 export const MainConfigSchema =
   S.Struct({
     $schema: S.NonEmptyString,
@@ -9,19 +8,17 @@ export const MainConfigSchema =
       S.propertySignature(S.String).annotations({
         title: "Generate to",
         description: "Generated files will be created here",
-        default: "src/generated"
+        default: "src/effect-aws-sdk"
       }),
     clients:
       S.propertySignature(S.NonEmptyArray(S.NonEmptyString)).annotations({
         title: "Clients",
         description: "Generate only these clients",
       }),
-    client_defaults: 
+    global:
       S.Struct({
         region: S.NonEmptyString
-      }).pipe(
-        S.partial
-      )
+      })
   }).pipe(S.partial);
 
 export const PackageJsonSchema =

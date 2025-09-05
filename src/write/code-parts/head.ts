@@ -1,5 +1,5 @@
-import type { ScannedSdk } from "#/scan-sdk/_model.js";
-import type { TypescriptSourceFile } from "#/type.js";
+import type { ScannedSdk } from "~/scan-sdk/_model";
+import type { TypescriptSourceFile } from "~/type";
 
 export const writeHeadPart = (
   { sdkName, getCommands, exceptionClass, clientClass }: ScannedSdk,
@@ -8,12 +8,20 @@ export const writeHeadPart = (
 
   out.addImportDeclarations([
     {
-      namespaceImport: "Micro",
-      moduleSpecifier: `effect/Micro`,
+      namespaceImport: "Layer",
+      moduleSpecifier: `effect/Layer`,
+    },
+    {
+      namespaceImport: "Effect",
+      moduleSpecifier: `effect/Effect`,
     },
     {
       namespaceImport: "Context",
       moduleSpecifier: `effect/Context`,
+    },
+    {
+      namespaceImport: "Fn",
+      moduleSpecifier: `effect/Function`,
     },
     {
       namespaceImport: "Sdk",

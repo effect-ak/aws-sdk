@@ -4,20 +4,21 @@
     "strict": true,
     "exactOptionalPropertyTypes": true,
     "types": [ "node" ],
-    "target": "ES2022",
-    "module": "NodeNext",
+    "target": "esnext",
+    "module": "esnext",
     "lib": ["ESNext"],
-    "moduleResolution": "NodeNext", 
+    "moduleResolution": "bundler", 
     "moduleDetection": "force",
     "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
+    "verbatimModuleSyntax": true,
     "noEmit": true,
     "baseUrl": ".",
     "noErrorTruncation": true,
     "paths": {
-      "#/*": ["./src/*"],
-      "#example/*": ["./example/*"]
+      "~/*": ["./src/*"],
+      "demo/*": ["./demo/src/*"],
     }
   }
 }
