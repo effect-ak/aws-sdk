@@ -18,21 +18,16 @@ export const scanNodeModules = (
         console.warn("sdk scanning error", error);
         return "InitProjectError"
       }
-    });
+    })
 
   if (sources._tag == "Left") return Either.left(sources.left);
 
   const classes = sources.right.flatMap(_ => _.getClasses());
   const interfaces = sources.right.flatMap(_ => _.getInterfaces());
 
-  // console.log(clientName, {
-  //   classesNumber: classes.length,
-  //   interfacesNumber: interfaces.length
-  // })
-
   const exceptionClass = classes.find(_ => _.getName()?.endsWith("ServiceException"));
 
-  if (!exceptionClass) return Either.left(`Exception class not found`);
+  if (!exceptionClass) return Either.left(`Exception class not found in ${clientName}`);
 
   const clientClass = classes.find(_ => _.getName()?.endsWith("Client"));
 

@@ -12,11 +12,11 @@ export class MainService
         const { writeCode } = yield* WriteService;
 
         const generateOneClient = 
-          (client: string) => pipe(
-            ScannedSdk.fromNodeModules(client),
-            Effect.andThen(writeCode),
-            Effect.andThen(client)
-          );
+          Effect.fn("generate client")(function* (client: string) {
+            const scannedSdk = yield* ScannedSdk.fromNodeModules(client)
+            yield* writeCode(scannedSdk)
+            return client
+          })
 
         const generateAllClients =
           Effect.forEach(clients, generateOneClient, {
