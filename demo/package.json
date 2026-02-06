@@ -1,10 +1,21 @@
 {
-  "private": "true",
+  "name": "demo",
+  "private": true,
+  "scripts": {
+    "postinstall": "gen-aws-sdk",
+    "test": "vitest run"
+  },
   "dependencies": {
     "@aws-sdk/client-s3": "3.876.0",
     "@aws-sdk/client-apigatewayv2": "3.876.0",
     "@aws-sdk/client-dynamodb": "3.876.0",
     "@aws-sdk/client-lambda": "3.876.0",
     "@aws-sdk/client-iam": "3.876.0"
+  },
+  "devDependencies": {
+    "@effect-ak/aws-sdk": "workspace:*",
+    "effect": "^3.12.0",
+    "ts-morph": "^25.0.0",
+    "vitest": "^3.0.0"
   }
 }

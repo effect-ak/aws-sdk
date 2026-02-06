@@ -1,37 +1,19 @@
 {
-  "name": "@effect-ak/aws-sdk",
-  "version": "1.0.0-rc2",
-  "author": {
-    "name": "Aleksandr Kondaurov",
-    "email": "kondaurov.dev@gmail.com"
-  },
-  "description": "Generates an AWS SDK wrapper for the Effect-ts",
-  "publishConfig": {
-    "access": "public"
-  },
-  "files": [
-    "dist"
-  ],
-  "repository": {
-    "url": "https://github.com/@effect-ak/aws-sdk"
-  },
-  "license": "MIT",
-  "main": "./dist/generate.js",
-  "module": "./dist/generate.mjs",
-  "bin": {
-    "gen-aws-sdk": "./dist/generate.js"
-  },
-  "dependencies": {
-    "ts-morph": "^26.0.0"
-  },
-  "peerDependencies": {
-    "effect": "^3.12.0"
+  "private": true,
+  "scripts": {
+    "test": "vitest",
+    "build": "pnpm -r build",
+    "pack": "pnpm build && rm -rf dist && mkdir -p dist && pnpm -r --filter '!demo' exec pnpm pack --pack-destination $PWD/dist",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.8",
     "@types/node": "^22.10.1",
-    "effect": "3.12.0",
-    "typescript": "^5.9.2",
-    "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.4"
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^6.0.5",
+    "vitest": "^4.0.18"
   }
 }

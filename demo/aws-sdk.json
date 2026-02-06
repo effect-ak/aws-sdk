@@ -1,5 +1,5 @@
 {
-  "$schema": "https://esm.sh/@effect-ak/aws-sdk@0.2.1/dist/schema.json",
+  "$schema": "https://esm.sh/@effect-ak/aws-sdk@1.0.0-rc1/dist/schema.json",
   "generate_to": "src/effect-aws-sdk",
   "global": {
     "region": "eu-west-3"
