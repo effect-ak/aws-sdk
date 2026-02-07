@@ -1,4 +1,4 @@
-import { Data, Either, pipe, String, Array, Option, Order, Effect, Context } from "effect";
+import { Data, pipe, String, Array, Option, Order, Effect, Context } from "effect";
 import * as Morph from "ts-morph";
 
 const isUpperCase = (input: string) =>
