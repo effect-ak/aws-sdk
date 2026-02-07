@@ -14,6 +14,11 @@
     "resolveJsonModule": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
-    "noErrorTruncation": true
-  }
+    "noErrorTruncation": true,
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"]
+    }
+  },
+  "include": ["src", "test"]
 }

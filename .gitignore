@@ -1,4 +1,4 @@
-example/generated
 node_modules
 dist
 *.tgz
+test/.generated
