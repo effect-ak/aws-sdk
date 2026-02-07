@@ -4,5 +4,7 @@
   "initialVersions": {
     "@effect-ak/aws-sdk": "1.0.0-rc.2"
   },
-  "changesets": []
+  "changesets": [
+    "rc3-wip"
+  ]
 }
