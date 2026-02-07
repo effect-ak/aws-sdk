@@ -2,10 +2,8 @@
   "mode": "pre",
   "tag": "rc",
   "initialVersions": {
-    "@effect-ak/aws-sdk": "1.0.0-rc1",
+    "@effect-ak/aws-sdk": "1.0.0-rc.2",
     "@effect-ak/aws-services": "0.0.1"
   },
-  "changesets": [
-    "rc-test-release"
-  ]
+  "changesets": []
 }
